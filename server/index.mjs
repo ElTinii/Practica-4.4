@@ -4,7 +4,18 @@ import fs from 'fs';
 import jszip from 'jszip';
 import xmldom from 'xmldom';
 
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
+
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
+});
 
 // Middleware para servir archivos estáticos
 app.use(express.static('public'));
