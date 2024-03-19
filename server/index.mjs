@@ -17,8 +17,24 @@ const upload = multer({ dest: 'uploads/' });
 
 
 class GoogleApi {
-    constructor(client_id, client_secret, redirect_uri) {
-        // Inicializa el cliente de Google Drive aquí
+    constructor(client_id, client_secret, redirect_uri, refreshToken) {
+
+        this.client_id = client_id;
+        this.client_secret = client_secret;
+        this.redirect_uri = redirect_uri;
+        this.refreshToken = refreshToken;
+
+        this.oAuth2Client = new google.auth.OAuth2(
+            this.client_id,
+            this.client_secret,
+            this.redirect_uri
+        );
+
+        this.oAuth2Client.setCredentials({
+            refresh_token: this.refreshToken
+        });
+
+        this.auth = this.oAuth2Client;
     }
 
     // Método para listar los archivos de Google Drive
@@ -44,15 +60,27 @@ class GoogleApi {
     }
 }
 
-// Lee las credenciales del archivo 'claus.json'
-const infoJSON = fs.readFileSync('credencials/claus.json');
-const credentials = JSON.parse(infoJSON);
+let credentials;
+let googleApi;
 
-// Extrae los datos de las credenciales
-const { client_id, client_secret, redirect_uri } = credentials;
+try {
+    const infoJSON = fs.readFileSync('credencials/claus.json');
+    credentials = JSON.parse(infoJSON);
+} catch (error) {
+    console.error('Error al leer o parsear el archivo claus.json:', error);
+}
 
-// Crea una instancia de GoogleApi y pasa los datos al constructor
-const googleApi = new GoogleApi(client_id, client_secret, redirect_uri);
+if (!credentials || !credentials.clientId || !credentials.clientSecret || !credentials.redirectUri) {
+    console.error('Las credenciales no están definidas correctamente en el archivo claus.json');
+} else {
+    const clientId = credentials.clientId;
+    const clientSecret = credentials.clientSecret;
+    const redirectUri = credentials.redirectUri;
+
+    // Crea una instancia de GoogleApi y pasa los datos al constructor   
+    googleApi = new GoogleApi(clientId, clientSecret, redirectUri);
+}
+
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(dir, '..', 'views', 'index.html'));
@@ -62,7 +90,7 @@ app.get('/', (req, res) => {
 app.use(express.static('public'));
 
 // Ruta de administración para subir libros
-app.post('/admin/upload', upload.single('file'), async (req, res) => {
+app.post('/admin/uploads', upload.single('file'), async (req, res) => {
     try {
         // Obtén el archivo subido
         const file = req.file;
@@ -70,7 +98,6 @@ app.post('/admin/upload', upload.single('file'), async (req, res) => {
         // Obtén el ID de la carpeta de destino en Google Drive
         const folderId = '1hXJNAaNcugtJKIde0qmh8WFDIvgFXbxF';
 
-        // Sube el archivo a Google Drive
         const response = await googleApi.uploadFile(file, folderId);
 
         // Envía una respuesta al cliente

@@ -17,7 +17,7 @@
         <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-extendido" role="document">
                 <div class="modal-content">
-                    <form id="addBookForm" method="post" enctype="multipart/form-data">
+                    <form id="upload-form" method="post" enctype="multipart/form-data">
                         <div class="modal-header">
                             <h5 class="modal-title" id="addBookModalLabel">Afegir llibre</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -25,7 +25,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="file" name="book" id="book" class="form-control" accept=".epub">
+                            <input type="file" name="book" id="file-input" class="form-control" accept=".epub">
                             <h2>Llibres actuals</h2>
                             <table id="myTable1" class="w-100">
                                 <thead>
@@ -50,8 +50,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
                             <button type="submit" id="afegir" class="btn btn-primary">Afegir</button>
