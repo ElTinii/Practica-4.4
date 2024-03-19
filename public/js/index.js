@@ -3,8 +3,8 @@ const btnAfegirLlibre = document.getElementById('afegir');
 
 btnCarregarLlibre.addEventListener('click', () => {
 
-    btnCarregarLlibre.addEventListener('change', () => {
-        const file = input.files[0];
+    btnCarregarLlibre.addEventListener('click', () => {
+        const file = btnAfegirLlibre.files[0];
 
         const formData = new FormData();
         formData.append('ebook', file);
@@ -25,7 +25,7 @@ btnCarregarLlibre.addEventListener('click', () => {
             });
     });
 
-    input.click();
+    // input.click();
 });
 
 btnAfegirLlibre.addEventListener('click', () => {
