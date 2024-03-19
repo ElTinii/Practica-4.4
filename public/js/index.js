@@ -3,8 +3,8 @@ const btnAfegirLlibre = document.getElementById('afegir');
 
 btnCarregarLlibre.addEventListener('click', () => {
 
-    btnCarregarLlibre.addEventListener('change', () => {
-        const file = input.files[0];
+    btnAfegirLlibre.addEventListener('click', () => {
+        const file = btnCarregarLlibre.files[0];
 
         const formData = new FormData();
         formData.append('ebook', file);
@@ -15,20 +15,17 @@ btnCarregarLlibre.addEventListener('click', () => {
         })
             .then(response => {
                 if (response.ok) {
-                    console.log('Archivo subido exitosamente');
+                        alert('Archivo subido exitosamente');
                 } else {
-                    console.error('Error al subir el archivo');
+                    alert('Error al subir el archivo');
                 }
             })
             .catch(error => {
-                console.error('Error en la solicitud:', error);
+                alert('Error en la solicitud:', error);
             });
     });
 
     input.click();
 });
 
-btnAfegirLlibre.addEventListener('click', () => {
-    
-});
 
