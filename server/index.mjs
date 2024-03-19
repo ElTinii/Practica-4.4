@@ -24,11 +24,7 @@ app.use(express.static('public'));
 
 // Ruta de administración para subir libros
 app.post('/admin/upload', (req, res) => {
-    function createDriveClient(clientId, clientSecret, redirectUri, refreshToken) {
-        const client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
-        client.setCredentials({ refresh_token: refreshToken });
-        return google.drive({ version: 'v3', auth: client });
-    }
+   
 });
 
 // Ruta de administración para eliminar libros
