@@ -25,7 +25,7 @@ btnCarregarLlibre.addEventListener('click', () => {
             });
     });
 
-    input.click();
+    // input.click();
 });
 
 
