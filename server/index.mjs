@@ -12,7 +12,6 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
 });
