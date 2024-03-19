@@ -1,0 +1,6 @@
+{
+    "clientId":".......................apps.googleusercontent.com",
+    "clientSecret":".......................................",
+    "redirectUri":"https://developers.google.com/oauthplayground",
+    "refreshToken":"1//......................................................"
+}

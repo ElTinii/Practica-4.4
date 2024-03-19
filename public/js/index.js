@@ -1,11 +1,9 @@
-const btnCarregarLlibre = document.getElementById('carregarLlibre');
+const btnCarregarLlibre = document.getElementById('book');
+const btnAfegirLlibre = document.getElementById('afegir');
 
 btnCarregarLlibre.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.epub'; // Solo permitir archivos en formato epub
 
-    input.addEventListener('change', () => {
+    btnCarregarLlibre.addEventListener('change', () => {
         const file = input.files[0];
 
         const formData = new FormData();
@@ -28,5 +26,9 @@ btnCarregarLlibre.addEventListener('click', () => {
     });
 
     input.click();
+});
+
+btnAfegirLlibre.addEventListener('click', () => {
+    
 });
 

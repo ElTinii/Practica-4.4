@@ -10,6 +10,8 @@ import xmldom from 'xmldom';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const gd = JSON.parse(fs.readFileSync("./private/claus.json", {encoding:"utf8"}));
+const driveClient = createDriveClient(gd.clientId, gd.clientSecret, gd.redirectUri, gd.refreshToken);
 
 const app = express();
 
@@ -22,7 +24,11 @@ app.use(express.static('public'));
 
 // Ruta de administración para subir libros
 app.post('/admin/upload', (req, res) => {
-    // Lógica para subir archivos .epub
+    function createDriveClient(clientId, clientSecret, redirectUri, refreshToken) {
+        const client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+        client.setCredentials({ refresh_token: refreshToken });
+        return google.drive({ version: 'v3', auth: client });
+    }
 });
 
 // Ruta de administración para eliminar libros
