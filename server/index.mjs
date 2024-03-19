@@ -15,72 +15,22 @@ const app = express();
 
 const upload = multer({ dest: 'uploads/' });
 
-
-class GoogleApi {
-    constructor(client_id, client_secret, redirect_uri, refreshToken) {
-
-        this.client_id = client_id;
-        this.client_secret = client_secret;
-        this.redirect_uri = redirect_uri;
-        this.refreshToken = refreshToken;
-
-        this.oAuth2Client = new google.auth.OAuth2(
-            this.client_id,
-            this.client_secret,
-            this.redirect_uri
-        );
-
-        this.oAuth2Client.setCredentials({
-            refresh_token: this.refreshToken
-        });
-
-        this.auth = this.oAuth2Client;
-    }
-
-    // Método para listar los archivos de Google Drive
-    async listFiles() {
-        // Lógica para listar los archivos
-    }
-
-    // Método para subir un archivo a Google Drive
-    async uploadFile(file, folderId) {
-        // Lógica para subir un archivo a Google Drive
-        const drive = google.drive({ version: 'v3', auth: this.auth });
-        const response = await drive.files.create({
-            requestBody: {
-                name: file.originalname,
-                parents: [folderId]
-            },
-            media: {
-                mimeType: file.mimetype,
-                body: fs.createReadStream(file.path)
-            }
-        });
-        return response.data;
-    }
+// Función para crear el cliente de Google Drive
+function createDriveClient(clientId, clientSecret, redirectUri, refreshToken) {
+    const client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+    client.setCredentials({ refresh_token: refreshToken });
+    return google.drive({ version: 'v3', auth: client });
 }
 
-let credentials;
-let googleApi;
+let gd;
+let driveClient;
 
 try {
-    const infoJSON = fs.readFileSync('credencials/claus.json');
-    credentials = JSON.parse(infoJSON);
+    gd = JSON.parse(fs.readFileSync("credencials/claus.json", {encoding:"utf8"}));
+    driveClient = createDriveClient(gd.clientId, gd.clientSecret, gd.redirectUri, gd.refreshToken);
 } catch (error) {
-    console.error('Error al leer o parsear el archivo claus.json:', error);
+    console.error('Error al leer o parsear el archivo google_drive.json:', error);
 }
-
-if (!credentials || !credentials.clientId || !credentials.clientSecret || !credentials.redirectUri) {
-    console.error('Las credenciales no están definidas correctamente en el archivo claus.json');
-} else {
-    const clientId = credentials.clientId;
-    const clientSecret = credentials.clientSecret;
-    const redirectUri = credentials.redirectUri;
-
-    // Crea una instancia de GoogleApi y pasa los datos al constructor   
-    googleApi = new GoogleApi(clientId, clientSecret, redirectUri);
-}
-
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(dir, '..', 'views', 'index.html'));
@@ -98,10 +48,20 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
         // Obtén el ID de la carpeta de destino en Google Drive
         const folderId = '1hXJNAaNcugtJKIde0qmh8WFDIvgFXbxF';
 
-        const response = await googleApi.uploadFile(file, folderId);
+        // Sube el archivo a Google Drive
+        const response = await driveClient.files.create({
+            requestBody: {
+                name: file.originalname,
+                parents: [folderId]
+            },
+            media: {
+                mimeType: file.mimetype,
+                body: fs.createReadStream(file.path)
+            }
+        });
 
         // Envía una respuesta al cliente
-        res.json({ message: 'Archivo subido con éxito', fileId: response.id });
+        res.json({ message: 'Archivo subido con éxito', fileId: response.data.id });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al subir el archivo' });

@@ -14,23 +14,20 @@ form.addEventListener('submit', async (event) => {
         const response = await fetch('/admin/uploads', {
             method: 'POST',
             body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Archivo subido exitosamente');
-                } else {
-                    console.error('Error al subir el archivo');
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-            });
-    });
+        });
 
-    // input.click();
+        // Comprueba si la petición fue exitosa
+        if (!response.ok) {
+            throw new Error('Error al subir el archivo');
+        }
+
+        // Procesa la respuesta
+        const data = await response.json();
+
+        // Muestra un mensaje de éxito
+        console.log(data.message);
+    } catch (error) {
+        // Muestra un mensaje de error
+        console.error(error);
+    }
 });
-
-btnAfegirLlibre.addEventListener('click', () => {
-    
-});
-
