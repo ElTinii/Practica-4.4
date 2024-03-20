@@ -46,7 +46,7 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
         const file = req.file;
 
         // Obtén el ID de la carpeta de destino en Google Drive
-        const folderId = '1hXJNAaNcugtJKIde0qmh8WFDIvgFXbxF';
+        const folderId = '1tOAYZZqs1eV-tDQEUboCEdHMMXPlbJXm';
 
         // Sube el archivo a Google Drive
         const response = await driveClient.files.create({
@@ -86,6 +86,26 @@ app.get('/books/:id', (req, res) => {
 // Ruta para enviar la lista de URLs de los capítulos al cliente
 app.get('/books/:id/chapters', (req, res) => {
     // Lógica para obtener la lista de capítulos
+});
+
+// Ruta para obtener la lista de archivos EPUB
+app.get('/api/epub-files', async (req, res) => {
+    try {
+        // ID de la carpeta que contiene los archivos EPUB
+        const folderId = '1tOAYZZqs1eV-tDQEUboCEdHMMXPlbJXm';
+
+        // Obtiene la lista de archivos EPUB en la carpeta
+        const response = await driveClient.files.list({
+            q: `'${folderId}' in parents and mimeType='application/epub+zip'`,
+            fields: 'files(id, name)',
+        });
+
+        // Envía la lista de archivos al cliente
+        res.json(response.data.files);
+    } catch (error) {
+        console.error('Error al obtener los archivos EPUB:', error);
+        res.status(500).json({ message: 'Error al obtener los archivos EPUB' });
+    }
 });
 
 app.listen(8080, () => console.log('Server: http://localhost:8080'));
