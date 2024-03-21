@@ -24,9 +24,6 @@ form.addEventListener('submit', async (event) => {
         // Procesa la respuesta
         const data = await response.json();
 
-        // Muestra un mensaje de éxito
-        console.log(data.message);
-
         // Mostrar los datos en la tabla
         afegirDadesALaTaula('myTable1', data);
         afegirDadesALaTaula('myTable2', data);
