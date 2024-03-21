@@ -61,10 +61,10 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
         });
 
         // Envía una respuesta al cliente
-        res.json({ message: 'Archivo subido con éxito', fileId: response.data.id });
+        res.json({ message: "L'arxiu s'ha carregat correctament !", fileId: response.data.id });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error al subir el archivo' });
+        res.status(500).json({ message: "Error al carregar l'arxiu" });
     }
 });
 
@@ -96,7 +96,7 @@ app.get('/api/epub-files', async (req, res) => {
 
         // Obtiene la lista de archivos EPUB en la carpeta
         const response = await driveClient.files.list({
-            q: `'${folderId}' in parents and mimeType='application/epub+zip'`,
+            q: `'${folderId}' in parents and mimeType='application/epub+zip' and trashed = false`,
             fields: 'files(id, name)',
         });
 

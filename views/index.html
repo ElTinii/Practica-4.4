@@ -19,40 +19,31 @@
                 <div class="modal-content">
                     <form id="upload-form" method="post" enctype="multipart/form-data">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addBookModalLabel">Afegir llibre</h5>
+                            <h5 class="modal-title" id="addBookModalLabel">Administració de llibres</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="file" name="book" id="file-input" class="form-control" accept=".epub">
-                            <h2>Llibres actuals</h2>
-                            <table id="myTable1" class="w-100">
+                            <div id="alert"></div>
+                            <h2>Afegir llibre</h2>
+                            <input type="file" name="book" id="file-input" class="form-control mt-3" accept=".epub">
+                            <h2 class="mt-3">Llibres actuals</h2>
+                            <table id="myTable1" class="w-100 mt-3">
                                 <thead>
                                     <tr>
                                         <th>Titol</th>
-                                        <th>Accions</th>
+                                        <th>Autor</th>
+                                        <th>Acció</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>El Quijote</td>
-                                        <td><button>Eliminar</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>El Señor de los Anillos</td>
-                                        <td><button>Eliminar</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>El Hobbit</td>
-                                        <td><button>Eliminar</button></td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
-                            <button type="submit" id="afegir" class="btn btn-primary">Afegir</button>
+                            <button type="submit" id="afegir" class="btn btn-success">Afegir</button>
                         </div>
                     </form>
                 </div>
@@ -71,6 +62,7 @@
                     <thead>
                         <tr>
                             <th>Titol</th>
+                            <th>Autor</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,10 +73,5 @@
         </div>
 
     </div>
-
-    <script>
-        let table1 = new DataTable('#myTable1');
-    </script>
-
     <script src="/js/index.js"></script></body>
 </html>
