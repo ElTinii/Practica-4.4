@@ -111,7 +111,7 @@ async function obtenirLlibres() {
                 { "data": "author" },
                 { 
                     "data": null,
-                    "defaultContent": "<button class='btn btn-danger w-100'>Eliminar</button>"
+                    "defaultContent": "<button class='btn btn-danger w-100' data-toggle='modal' data-target='#deleteBookModal'>Eliminar</button>"
                 }
             ]
         });

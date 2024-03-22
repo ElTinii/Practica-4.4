@@ -74,17 +74,17 @@ app.delete('/admin/delete/:id', (req, res) => {
 });
 
 // Ruta pública para obtener la lista de libros
-app.get('/books', (req, res) => {
+app.get('/libros', (req, res) => {
     // Lógica para obtener la lista de libros
 });
 
 // Ruta para descargar y descomprimir el libro seleccionado
-app.get('/books/:id', (req, res) => {
+app.get('/libros/:id', (req, res) => {
     // Lógica para descargar y descomprimir el libro
 });
 
 // Ruta para enviar la lista de URLs de los capítulos al cliente
-app.get('/books/:id/chapters', (req, res) => {
+app.get('/libros/:id/capitols', (req, res) => {
     // Lógica para obtener la lista de capítulos
 });
 
