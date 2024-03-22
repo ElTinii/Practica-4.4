@@ -74,8 +74,17 @@ app.delete('/admin/delete/:id', (req, res) => {
 });
 
 // Ruta pública para obtener la lista de libros
-app.get('/libros', (req, res) => {
-    // Lógica para obtener la lista de libros
+app.get('/libros', async (req, res) => {
+    try {
+        const response = await driveClient.files.list({
+            q: "'1tOAYZZqs1eV-tDQEUboCEdHMMXPlbJXm' in parents and trashed = false",
+            fields: 'files(id, name)',
+        });
+        res.json(response.data.files);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener los libros" });
+    }
 });
 
 // Ruta para descargar y descomprimir el libro seleccionado

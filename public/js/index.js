@@ -125,5 +125,20 @@ async function obtenirLlibres() {
     }
 }
 
+async function llenarSelectConLibros() {
+    const select = document.getElementById('selectLlibres');
+    const response = await fetch('/libros');
+    const libros = await response.json();
+    for (const libro of libros) {
+        const option = document.createElement('option');
+        option.value = libro.id;
+        option.text = libro.name;
+        select.appendChild(option);
+    }
+}
+
 // Llama a la función cuando se carga la página
-window.addEventListener('load', obtenirLlibres);
+window.addEventListener('load', () => {
+    obtenirLlibres();
+    llenarSelectConLibros();
+});
