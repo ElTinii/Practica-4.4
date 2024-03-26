@@ -1,7 +1,8 @@
-const form = document.querySelector('#upload-form');
+const afegir = document.querySelector('#afegir');
 const fileInput = document.querySelector('#file-input');
+const btnEliminar = document.querySelector('#eliminar');
 
-form.addEventListener('submit', async (event) => {
+afegir.addEventListener('click', async (event) => {
     // Evita el comportamiento por defecto del formulario
     event.preventDefault();
 
@@ -44,19 +45,65 @@ form.addEventListener('submit', async (event) => {
         fileInput.value = '';
 
         // Mostrar un mensaje de éxito con bootstrap que se ocultará después de 3 segundos
-        const alert = document.getElementById('alert');
-        alert.textContent = data.message;
-        alert.classList.add('alert', 'alert-success', 'mt-3');
-        alert.style.display = 'block';
-        setTimeout(() => {
-            alert.style.display = 'none';
-        }, 6000);
+        // const alert = document.getElementById('alert');
+        // alert.textContent = data.message;
+        // alert.classList.add('alert', 'alert-success', 'mt-3');
+        // alert.style.display = 'block';
+        // setTimeout(() => {
+        //     alert.style.display = 'none';
+        // }, 6000);
+        alerts(data.message, 'alert-success');
 
     } catch (error) {
         // Muestra un mensaje de error
         console.error(error);
     }
 });
+
+$('#myTable1').on('click', 'button', async function(event) {
+    if(confirm("Segur que vols eliminar el llibre?")){
+    event.preventDefault();
+    const formData = new FormData();
+    const selectedBookId = $(this).data('id');
+
+    try {
+        const response = await fetch(`/admin/delete/${selectedBookId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al eliminar el archivo');
+        }
+        const data = await response.json();
+
+        if (data.success) {
+            const table1 = $('#myTable1').DataTable();
+            const table2 = $('#myTable2').DataTable();
+
+            // Actualiza las tablas
+            table1.clear().rows.add(data).draw();
+            table2.clear().rows.add(data).draw();
+
+            obtenirLlibres();
+            alert('Libro eliminado correctamente');
+        } else {
+            alert('Error al eliminar el libro');
+        }
+        alerts(data.message, 'alert-danger');
+    } catch (error) {
+        console.error(error);
+    }
+}});
+
+function alerts(message, color){
+    const alert = document.getElementById('alert');
+        alert.textContent = message;
+        alert.classList.add('alert', color, 'mt-3');
+        alert.style.display = 'block';
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 6000);
+}
 
 function afegirDadesALaTaula(tableId, data) {
     let table = document.getElementById(tableId);
@@ -72,7 +119,6 @@ async function obtenirLlibres() {
         // Obtén la lista de archivos EPUB
         const response = await fetch('/api/epub-files');
         const files = await response.json();
-
         const tableBody1 = document.getElementById('myTable1').getElementsByTagName('tbody')[0];
         const tableBody2 = document.getElementById('myTable2').getElementsByTagName('tbody')[0];
 
@@ -88,6 +134,9 @@ async function obtenirLlibres() {
             // Separar el nombre del archivo en título y autor
             const [title, author] = file.name.split(' - ');
 
+            // Agregar una nueva celda con el ID del libro
+            const idCell1 = newRow1.insertCell();
+            idCell1.textContent = file.id;
             // Agregar una nueva celda con el título del libro
             const titleCell1 = newRow1.insertCell();
             const titleCell2 = newRow2.insertCell();
@@ -105,17 +154,38 @@ async function obtenirLlibres() {
         if ($.fn.DataTable.isDataTable('#myTable1')) {
             $('#myTable1').DataTable().destroy();
         }
+        // $('#myTable1').DataTable({
+        //     "columns": [
+        //         {"data": "id"},
+        //         { "data": "title" },
+        //         { "data": "author" },
+        //         { 
+        //             "data": null,
+        //             "render": function(data, type, row) {
+        //                 return `<button type='button' data-id='${data.id}' class='btn btn-danger w-100' data-toggle='modal' data-target='#deleteBookModal' id='llibre:${data.id}'>Eliminar</button>`;
+        //             }
+        //         }
+        //     ]
+        // });
         $('#myTable1').DataTable({
             "columns": [
+                { "data": "id", "visible": false },
                 { "data": "title" },
                 { "data": "author" },
                 { 
                     "data": null,
-                    "defaultContent": "<button class='btn btn-danger w-100' data-toggle='modal' data-target='#deleteBookModal'>Eliminar</button>"
+                    "render": function(data, type, row) {
+                        return `<button type='button' value='' class='btn btn-danger w-100' data-id='${row.id}'>Eliminar</button>`;
+                    }
                 }
             ]
         });
-
+        $('#myTable1').on('click', 'button', function() {
+            const table = $('#myTable1').DataTable();
+            const data = table.row($(this).parents('tr')).data();
+            const fileId = data.id;
+            // Ahora puedes usar fileId para hacer la solicitud DELETE
+        });
         if ($.fn.DataTable.isDataTable('#myTable2')) {
             $('#myTable2').DataTable().destroy();
         }
