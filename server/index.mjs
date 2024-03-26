@@ -69,8 +69,17 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
 });
 
 // Ruta de administración para eliminar libros
-app.delete('/admin/delete/:id', (req, res) => {
-    // Lógica para eliminar archivos .epub
+app.post('/admin/delete/:id', (req, res) => {
+    alert("hola");
+    const bookId = req.params.id;
+
+    Book.findByIdAndRemove(bookId, (err, result) => {
+        if (err) {
+            res.json({ success: false, message: err });
+        } else {
+            res.json({ success: true, message: 'Libro eliminado exitosamente' });
+        }
+    });
 });
 
 // Ruta pública para obtener la lista de libros

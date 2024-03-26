@@ -1,7 +1,8 @@
-const form = document.querySelector('#upload-form');
+const form = document.querySelector('#afegir');
 const fileInput = document.querySelector('#file-input');
+const deleteButton = document.querySelector('#eliminar');
 
-form.addEventListener('submit', async (event) => {
+form.addEventListener('click', async (event) => {
     // Evita el comportamiento por defecto del formulario
     event.preventDefault();
 
@@ -111,7 +112,7 @@ async function obtenirLlibres() {
                 { "data": "author" },
                 { 
                     "data": null,
-                    "defaultContent": "<button class='btn btn-danger w-100' data-toggle='modal' data-target='#deleteBookModal'>Eliminar</button>"
+                    "defaultContent": "<button id='eliminar' class='btn btn-danger w-100'>Eliminar</button>"
                 }
             ]
         });
@@ -124,6 +125,28 @@ async function obtenirLlibres() {
         console.error('Error al obtener los archivos EPUB:', error);
     }
 }
+deleteButton.addEventListener('click', (event) => {
+    // Detiene la propagación del evento
+    event.stopPropagation();
+
+    const bookId = deleteButton.dataset.bookId; // Asegúrate de que el ID del libro esté disponible como un atributo de datos en el botón de eliminar
+
+    fetch(`/admin/delete/${bookId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Libro eliminado exitosamente');
+            // Aquí puedes hacer cualquier limpieza necesaria después de eliminar el libro, como eliminar el libro de la interfaz de usuario
+        } else {
+            console.error('Error al eliminar el libro');
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+});
 
 async function llenarSelectConLibros() {
     const select = document.getElementById('selectLlibres');
