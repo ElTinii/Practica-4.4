@@ -160,6 +160,15 @@ async function llenarSelectConLibros() {
     }
 }
 
+document.getElementById('btnLlegir').addEventListener('click', (event) => {
+    event.preventDefault();
+    const selectedBookId = document.getElementById('selectLlibres').value;
+    const iframe = document.getElementById('bookIframe');
+    iframe.src = `/libros/${selectedBookId}`; // Ajusta esta URL según necesites
+    iframe.hidden = false; // Mostrar el iframe
+});
+
+
 // Llama a la función cuando se carga la página
 window.addEventListener('load', () => {
     obtenirLlibres();
