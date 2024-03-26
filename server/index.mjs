@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import jszip from 'jszip';
 import xmldom from 'xmldom';
+import { books } from 'googleapis/build/src/apis/books';
 
 
 const url = fileURLToPath(import.meta.url);
@@ -70,7 +71,6 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
 
 // Ruta de administración para eliminar libros
 app.delete('/admin/delete/:id', (req, res) => {
-    // Lógica para eliminar archivos .epub
 });
 
 // Ruta pública para obtener la lista de libros
@@ -146,5 +146,6 @@ app.get('/api/epub-files', async (req, res) => {
         res.status(500).json({ message: 'Error al obtener los archivos EPUB' });
     }
 });
+
 
 app.listen(8080, () => console.log('Server: http://localhost:8080'));
