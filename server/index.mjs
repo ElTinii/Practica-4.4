@@ -8,7 +8,6 @@ import fs from 'fs';
 import jszip from 'jszip';
 import xmldom from 'xmldom';
 
-
 const url = fileURLToPath(import.meta.url);
 const dir = dirname(url);
 const app = express();
@@ -68,26 +67,8 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
     }
 });
 
-//   Ruta de administración para eliminar libros
+// Ruta de administración para eliminar libros
 app.delete('/admin/delete/:id', (req, res) => {
-    const fileId = req.params.id;
-
-    // Eliminar el archivo de Google Drive
-    driveClient.files.delete({
-        fileId: fileId,
-    }, function (err, response) {
-        if (err) {
-            console.error('Error al eliminar el archivo de Google Drive:', err);
-            res.json({ success: false, message: 'Error al eliminar el archivo de Google Drive' });
-            return;
-        } else {
-            console.log('Archivo eliminado de Google Drive exitosamente');
-        }
-    });
-
-    // Eliminar el archivo de la carpeta de uploads
-
-    res.json({ success: true, message: 'Archivo eliminado exitosamente' });
 });
 
 // Ruta pública para obtener la lista de libros
@@ -115,7 +96,7 @@ app.get('/libros/:id', async (req, res) => {
             { fileId: id, alt: 'media' },
             { responseType: 'stream' }
         );
-
+        
         response.data
             .on('end', async () => {
                 console.log('Descarga completada.');
@@ -127,7 +108,7 @@ app.get('/libros/:id', async (req, res) => {
                     const contentOPFText = await contentOPF.async("text");
 
                     res.send(contentOPFText);
-                    return; 
+                    return; // Asegúrate de que la función se detenga aquí
                 }
 
                 res.status(200).json({ message: "Libro descargado y listo para procesar." });
@@ -143,10 +124,6 @@ app.get('/libros/:id', async (req, res) => {
     }
 });
 
-// Ruta para enviar la lista de URLs de los capítulos al cliente
-app.get('/libros/:id/capitols', (req, res) => {
-    // Lógica para obtener la lista de capítulos
-});
 
 // Ruta para obtener la lista de archivos EPUB
 app.get('/api/epub-files', async (req, res) => {
