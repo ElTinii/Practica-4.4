@@ -105,8 +105,42 @@ app.get('/libros', async (req, res) => {
 });
 
 // Ruta para descargar y descomprimir el libro seleccionado
-app.get('/libros/:id', (req, res) => {
-    // Lógica para descargar y descomprimir el libro
+app.get('/libros/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const dest = fs.createWriteStream(path.join(dir, 'libros', `${id}.zip`));
+        res.send(dest)
+        const response = await driveClient.files.get(
+            { fileId: id, alt: 'media' },
+            { responseType: 'stream' }
+        );
+
+        response.data
+            .on('end', async () => {
+                console.log('Descarga completada.');
+
+                const zip = await jszip.loadAsync(fs.readFileSync(path.join(dir, 'libros', `${id}.zip`)));
+                const contentOPF = zip.file(/^.*?content.opf$/)[0];
+
+                if (contentOPF) {
+                    const contentOPFText = await contentOPF.async("text");
+
+                    res.send(contentOPFText);
+                    return; 
+                }
+
+                res.status(200).json({ message: "Libro descargado y listo para procesar." });
+            })
+            .on('error', err => {
+                console.log('Error al descargar el archivo.', err);
+                res.status(500).json({ message: "Error al descargar el libro." });
+            })
+            .pipe(dest);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al procesar el libro." });
+    }
 });
 
 // Ruta para enviar la lista de URLs de los capítulos al cliente
