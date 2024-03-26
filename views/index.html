@@ -72,12 +72,24 @@
             </div>
         </div>
 
-        <div class="form-group mt-3">
-            <label for="llibre">Seleccioni el llibre</label>
-            <select class="form-control" id="selectLlibres">
-                <option value="0">Seleccioni un llibre</option>
-            </select>
-        </div>
+        <form id="llegir">
+            <div class="form-group mt-3">
+                <label for="llibre">Selecciona el llibre que vols llegir</label>
+                <select class="form-control" id="selectLlibres">
+                    <option value="0" disabled selected>Seleccioni un llibre</option>
+                </select>
+                <!-- Quitar el tipo de botón para que no envíe el formulario -->
+                <button class="btn btn-primary mt-2 w-100" id="btnLlegir">Llegir</button>
+            </div>
+        </form>
+        <!-- Añade un iframe para mostrar el contenido del libro -->
+        <iframe id="bookIframe" style="width:100%; height:600px;" hidden></iframe>
+
+        <!-- btnNextChapter -->
+        <button id="btnNextChapter" class="btn btn-primary mt-2 w-100" hidden>Següent capítol</button>
+        <!-- btnPreviousChapter -->
+        <button id="btnPreviousChapter" class="btn btn-primary mt-2 w-100" hidden>Capítol anterior</button>
+
 
         <div class="modal fade" id="deleteBookModal" tabindex="-1" role="dialog" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
