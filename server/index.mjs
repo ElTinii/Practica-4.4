@@ -7,8 +7,6 @@ import path from 'path';
 import fs from 'fs';
 import jszip from 'jszip';
 import xmldom from 'xmldom';
-import { books } from 'googleapis/build/src/apis/books';
-
 
 const url = fileURLToPath(import.meta.url);
 const dir = dirname(url);
@@ -69,26 +67,8 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
     }
 });
 
-//   Ruta de administración para eliminar libros
+// Ruta de administración para eliminar libros
 app.delete('/admin/delete/:id', (req, res) => {
-    const fileId = req.params.id;
-
-    // Eliminar el archivo de Google Drive
-    driveClient.files.delete({
-        fileId: fileId,
-    }, function (err, response) {
-        if (err) {
-            console.error('Error al eliminar el archivo de Google Drive:', err);
-            res.json({ success: false, message: 'Error al eliminar el archivo de Google Drive' });
-            return;
-        } else {
-            console.log('Archivo eliminado de Google Drive exitosamente');
-        }
-    });
-
-    // Eliminar el archivo de la carpeta de uploads
-
-    res.json({ success: true, message: 'Archivo eliminado exitosamente' });
 });
 
 // Ruta pública para obtener la lista de libros
@@ -106,14 +86,44 @@ app.get('/libros', async (req, res) => {
 });
 
 // Ruta para descargar y descomprimir el libro seleccionado
-app.get('/libros/:id', (req, res) => {
-    // Lógica para descargar y descomprimir el libro
+app.get('/libros/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const dest = fs.createWriteStream(path.join(dir, 'libros', `${id}.zip`));
+        res.send(dest)
+        const response = await driveClient.files.get(
+            { fileId: id, alt: 'media' },
+            { responseType: 'stream' }
+        );
+        
+        response.data
+            .on('end', async () => {
+                console.log('Descarga completada.');
+
+                const zip = await jszip.loadAsync(fs.readFileSync(path.join(dir, 'libros', `${id}.zip`)));
+                const contentOPF = zip.file(/^.*?content.opf$/)[0];
+
+                if (contentOPF) {
+                    const contentOPFText = await contentOPF.async("text");
+
+                    res.send(contentOPFText);
+                    return; // Asegúrate de que la función se detenga aquí
+                }
+
+                res.status(200).json({ message: "Libro descargado y listo para procesar." });
+            })
+            .on('error', err => {
+                console.log('Error al descargar el archivo.', err);
+                res.status(500).json({ message: "Error al descargar el libro." });
+            })
+            .pipe(dest);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al procesar el libro." });
+    }
 });
 
-// Ruta para enviar la lista de URLs de los capítulos al cliente
-app.get('/libros/:id/capitols', (req, res) => {
-    // Lógica para obtener la lista de capítulos
-});
 
 // Ruta para obtener la lista de archivos EPUB
 app.get('/api/epub-files', async (req, res) => {
@@ -134,6 +144,5 @@ app.get('/api/epub-files', async (req, res) => {
         res.status(500).json({ message: 'Error al obtener los archivos EPUB' });
     }
 });
-
 
 app.listen(8080, () => console.log('Server: http://localhost:8080'));
