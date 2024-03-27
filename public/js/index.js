@@ -44,14 +44,6 @@ afegir.addEventListener('click', async (event) => {
         // Limpia el campo de entrada de archivos
         fileInput.value = '';
 
-        // Mostrar un mensaje de éxito con bootstrap que se ocultará después de 3 segundos
-        // const alert = document.getElementById('alert');
-        // alert.textContent = data.message;
-        // alert.classList.add('alert', 'alert-success', 'mt-3');
-        // alert.style.display = 'block';
-        // setTimeout(() => {
-        //     alert.style.display = 'none';
-        // }, 6000);
         alerts(data.message, 'alert-success');
 
     } catch (error) {
@@ -81,10 +73,8 @@ $('#myTable1').on('click', 'button', async function(event) {
             const table2 = $('#myTable2').DataTable();
 
             // Actualiza las tablas
-            table1.clear().rows.add(data).draw();
-            table2.clear().rows.add(data).draw();
-
-            obtenirLlibres();
+            table1.rows(`[data-id='${selectedBookId}']`).remove().draw();
+            table2.rows(`[data-id='${selectedBookId}']`).remove().draw()
             alert('Libro eliminado correctamente');
         } else {
             alert('Error al eliminar el libro');
@@ -137,6 +127,8 @@ async function obtenirLlibres() {
             // Agregar una nueva celda con el ID del libro
             const idCell1 = newRow1.insertCell();
             idCell1.textContent = file.id;
+            newRow1.setAttribute('data-id', file.id);
+            newRow2.setAttribute('data-id', file.id);
             // Agregar una nueva celda con el título del libro
             const titleCell1 = newRow1.insertCell();
             const titleCell2 = newRow2.insertCell();
