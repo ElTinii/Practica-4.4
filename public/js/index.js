@@ -57,10 +57,16 @@ $('#myTable1').on('click', 'button', async function(event) {
     event.preventDefault();
     const formData = new FormData();
     const selectedBookId = $(this).data('id');
+    const filename = $(this).data('filename');
 
     try {
         const response = await fetch(`/admin/delete/${selectedBookId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            filename: filename, // Pasa el filename en el cuerpo de la solicitud
+        
         });
 
         if (!response.ok) {
@@ -146,19 +152,6 @@ async function obtenirLlibres() {
         if ($.fn.DataTable.isDataTable('#myTable1')) {
             $('#myTable1').DataTable().destroy();
         }
-        // $('#myTable1').DataTable({
-        //     "columns": [
-        //         {"data": "id"},
-        //         { "data": "title" },
-        //         { "data": "author" },
-        //         { 
-        //             "data": null,
-        //             "render": function(data, type, row) {
-        //                 return `<button type='button' data-id='${data.id}' class='btn btn-danger w-100' data-toggle='modal' data-target='#deleteBookModal' id='llibre:${data.id}'>Eliminar</button>`;
-        //             }
-        //         }
-        //     ]
-        // });
         $('#myTable1').DataTable({
             "columns": [
                 { "data": "id", "visible": false },
@@ -167,7 +160,7 @@ async function obtenirLlibres() {
                 { 
                     "data": null,
                     "render": function(data, type, row) {
-                        return `<button type='button' value='' class='btn btn-danger w-100' data-id='${row.id}'>Eliminar</button>`;
+                        return `<button type='button' class='btn btn-danger w-100' data-id='${row.id}' data-filename='${row.filename}'>Eliminar</button>`;
                     }
                 }
             ]

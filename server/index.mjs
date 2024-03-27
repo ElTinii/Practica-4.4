@@ -66,9 +66,35 @@ app.post('/admin/uploads', upload.single('file'), async (req, res) => {
         res.status(500).json({ message: "Error al carregar l'arxiu" });
     }
 });
-
 // Ruta de administración para eliminar libros
 app.delete('/admin/delete/:id', (req, res) => {
+    const fileId = req.params.id;
+    // const filename = req.body.filename;
+
+    // Eliminar el archivo de Google Drive
+    driveClient.files.delete({
+        fileId: fileId,
+    }, function (err, response) {
+        if (err) {
+            console.error('Error al eliminar el archivo de Google Drive:', err);
+            res.json({ success: false, message: 'Error al eliminar el archivo de Google Drive' });
+            return;
+        } else {
+            console.log('Archivo eliminado de Google Drive exitosamente');
+        }
+    });
+    //Eliminar el archivo de la carpeta de uploads
+    // fs.unlink(`./uploads/${filename}`, function (err) {
+    //     if (err) {
+    //         console.error('Error al eliminar el archivo de la carpeta de uploads:', err);
+    //         res.json({ success: false, message: 'Error al eliminar el archivo de la carpeta de uploads' });
+    //         return;
+    //     } else {
+    //         console.log('Archivo eliminado de la carpeta de uploads exitosamente');
+    //     }
+    // });
+
+    res.json({ success: true, message: 'Archivo eliminado exitosamente' });
 });
 
 // Ruta pública para obtener la lista de libros
