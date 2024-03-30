@@ -169,7 +169,6 @@ async function obtenirLlibres() {
             const table = $('#myTable1').DataTable();
             const data = table.row($(this).parents('tr')).data();
             const fileId = data.id;
-            // Ahora puedes usar fileId para hacer la solicitud DELETE
         });
         if ($.fn.DataTable.isDataTable('#myTable2')) {
             $('#myTable2').DataTable().destroy();
@@ -192,13 +191,49 @@ async function llenarSelectConLibros() {
     }
 }
 
+let chapterUrls = [];
+let currentChapter = 0;
+
 document.getElementById('btnLlegir').addEventListener('click', (event) => {
     event.preventDefault();
     const selectedBookId = document.getElementById('selectLlibres').value;
-    const iframe = document.getElementById('bookIframe');
-    iframe.src = `/libros/${selectedBookId}`; // Ajusta esta URL según necesites
-    iframe.hidden = false; // Mostrar el iframe
+
+    // Obtén la lista de URLs de los capítulos
+    fetch(`/libros/${selectedBookId}`)
+        .then(response => response.json())
+        .then(urls => {
+            chapterUrls = urls;
+            // Carga el primer capítulo
+            loadChapter();
+        });
 });
+
+function loadChapter() {
+    // Actualiza el src del iframe
+    const iframe = document.getElementById('bookIframe');
+    iframe.src = chapterUrls[currentChapter];
+    iframe.hidden = false; // Mostrar el iframe
+}
+
+// Función para ir al siguiente capítulo
+function nextChapter() {
+    if (currentChapter < chapterUrls.length - 1) {
+        currentChapter++;
+        loadChapter();
+    }
+}
+
+// Función para ir al capítulo anterior
+function prevChapter() {
+    if (currentChapter > 0) {
+        currentChapter--;
+        loadChapter();
+    }
+}
+
+// Agrega los controladores de eventos a los botones
+document.getElementById('nextButton').addEventListener('click', nextChapter);
+document.getElementById('prevButton').addEventListener('click', prevChapter);
 
 
 // Llama a la función cuando se carga la página
