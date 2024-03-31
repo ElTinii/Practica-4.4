@@ -9,7 +9,10 @@ afegir.addEventListener('click', async (event) => {
     // Crea un objeto FormData y añade el archivo
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
-
+    if (!fileInput.files[0]) {
+        alert('Selecciona un archivo EPUB');
+        return;
+    }
     try {
         // Envía el archivo al servidor
         const response = await fetch('/admin/uploads', {
@@ -40,7 +43,7 @@ afegir.addEventListener('click', async (event) => {
         }
 
         obtenirLlibres();
-
+        llenarSelectConLibros();
         // Limpia el campo de entrada de archivos
         fileInput.value = '';
 
@@ -81,6 +84,7 @@ $('#myTable1').on('click', 'button', async function(event) {
             // Actualiza las tablas
             table1.rows(`[data-id='${selectedBookId}']`).remove().draw();
             table2.rows(`[data-id='${selectedBookId}']`).remove().draw()
+            llenarSelectConLibros();
             alert('Libro eliminado correctamente');
         } else {
             alert('Error al eliminar el libro');
@@ -146,6 +150,7 @@ async function obtenirLlibres() {
             const authorCell2 = newRow2.insertCell();
             authorCell1.textContent = author;
             authorCell2.textContent = author;
+
         });
 
         // Inicializa las tablas con DataTables después de agregar las filas
@@ -183,6 +188,7 @@ async function llenarSelectConLibros() {
     const select = document.getElementById('selectLlibres');
     const response = await fetch('/libros');
     const libros = await response.json();
+    select.innerHTML = '';
     for (const libro of libros) {
         const option = document.createElement('option');
         option.value = libro.id;
