@@ -191,8 +191,8 @@ async function llenarSelectConLibros() {
     }
 }
 
-let chapterUrls = [];
-let currentChapter = 0;
+let capURLS = [];
+let capActual = 0;
 
 document.getElementById('btnLlegir').addEventListener('click', (event) => {
     event.preventDefault();
@@ -202,7 +202,7 @@ document.getElementById('btnLlegir').addEventListener('click', (event) => {
     fetch(`/libros/${selectedBookId}`)
         .then(response => response.json())
         .then(urls => {
-            chapterUrls = urls;
+            capURLS = urls;
             // Carga el primer capítulo
             loadChapter();
         });
@@ -211,22 +211,22 @@ document.getElementById('btnLlegir').addEventListener('click', (event) => {
 function loadChapter() {
     // Actualiza el src del iframe
     const iframe = document.getElementById('bookIframe');
-    iframe.src = chapterUrls[currentChapter];
+    iframe.src = capURLS[capActual];
     iframe.hidden = false; // Mostrar el iframe
 }
 
 // Función para ir al siguiente capítulo
 function nextChapter() {
-    if (currentChapter < chapterUrls.length - 1) {
-        currentChapter++;
+    if (capActual < capURLS.length - 1) {
+        capActual++;
         loadChapter();
     }
 }
 
 // Función para ir al capítulo anterior
 function prevChapter() {
-    if (currentChapter > 0) {
-        currentChapter--;
+    if (capActual > 0) {
+        capActual--;
         loadChapter();
     }
 }
